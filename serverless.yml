@@ -1,0 +1,60 @@
+service: FizzBurgerChallenge
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 192
+  stage: ${opt:stage, 'local'}
+  region: ${opt:region, 'us-east-1'}
+  endpointType: REGIONAL
+  apiName: FizzBurgerChallenge API
+
+custom:
+  serverless-offline:
+    host: '0.0.0.0'
+    port: 4000
+    printOutput: true
+    cacheInvalidationRegex: 'node_modules/'
+
+functions:
+  GetProducts:
+    handler: src/product/getAll.handler
+    description: Función de ejemplo para GET. Eliminar cuando ya no se necesite más.
+    events:
+      - http:
+          integration: lambda-proxy
+          method: get
+          path: /api/product
+  PostProduct:
+    handler: src/product/create.handler
+    description: Función de ejemplo para POST. Eliminar cuando ya no se necesite más.
+    events:
+      - http:
+          integration: lambda-proxy
+          method: post
+          path: /api/product
+  GetProduct:
+    handler: src/product/getById.handler
+    events:
+      - http:
+          integration: lambda-proxy
+          path: /api/product/{id}
+          method: GET          
+  UpdateProduct:
+    handler: src/product/update.handler
+    events:
+      - http:
+          integration: lambda-proxy
+          path: /api/product/{id}
+          method: PUT
+  DeleteProduct:
+    handler: src/product/delete.handler
+    events:
+      - http:
+          integration: lambda-proxy
+          path: /api/product/{id}
+          method: DELETE                                 
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
